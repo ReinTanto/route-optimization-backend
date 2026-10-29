@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  osrm-car:
+    image: ghcr.io/project-osrm/osrm-backend:latest
+    container_name: osrm-car
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./osrm-data:/data
+    # OSRM is pre-processed offline (see README "Pre-processing").
+    # This command serves the pre-built routing data.
+    command: osrm-routed --algorithm mld /data/indonesia-latest.osrm
+
+  vroom:
+    image: ghcr.io/vroom-project/vroom-docker:v1.14.0
+    container_name: vroom-optimizer
+    restart: unless-stopped
+    # Host port 3080 -> container 3000 (avoids clash with other services on 3000).
+    ports:
+      - "3080:3000"
+    environment:
+      - VROOM_ROUTER=osrm
+    volumes:
+      - ./vroom-conf:/conf
+    depends_on:
+      - osrm-car

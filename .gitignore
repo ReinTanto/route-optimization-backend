@@ -1,0 +1,14 @@
+# Large data files — not committed
+*.osm.pbf
+osrm-data/
+*.osrm
+*.osrm.*
+
+# Logs
+*.log
+access.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
